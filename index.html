@@ -1,44 +1,43 @@
-<script src="/jolt/jolt.js"></script>
+<script src="jolt.js"></script>
 
 <script>
+
+/**
+ * jolt.js Demo Page
+ * @author Nate Ferrero
+ * @license Public Domain
+ */
 
 var log = function (x) {
     console.log(x);
 };
 
-var Package = function (name) {
+var Person = function Person (name) {
+    this.jolt();  // This bit makes everything happen
+
     this.name = name;
-    this.shipped = false;
-    this.has = 'have';
+    this.alive = true;
 };
 
-Package.prototype.ship = function () {
-    if (this.shipped) {
-        throw new Error('Already shipped');
-    }
-    this.shipped = true;
-    return this;
+Person.setPlanet = function (planet) {
+    this.planet = planet;
+};
+  
+Person.greeting = function property () {
+    return this.formatGreeting(this.name, this.planet);
 };
 
-/**
- * New package
- */
-var shoes = new Package('shoes');
+Person.formatGreeting = function classMethod (cls, name, planet) {
+    return 'Hi, I am %1 from %2'.replace('%1', name).replace('%2', planet);
+};
 
-Package.prototype.ship.then(function () {
-    log('Your %1 %2 shipped!'
-        .replace('%1', this.name)
-        .replace('%2', this.has));;
+var bob = new Person('Bob Miller');
+bob.setPlanet('Earth');
+console.log(bob.greeting);  // Prints 'Hi, I am Bob Miller from Earth.'
+
+bob.setPlanet('Mars').in(2000)
+bob.setPlanet.then(function () {
+    console.log(bob.greeting);
 });
-
-Package.prototype.ship.error(function (e) {
-    log('There was an error shipping your ' + this.name);
-});
-
-Package.funj();
-
-shoes.ship.now();
-
-shoes.ship.in(2, 's');
 
 </script>
