@@ -1,0 +1,44 @@
+<script src="/jolt/jolt.js"></script>
+
+<script>
+
+var log = function (x) {
+    console.log(x);
+};
+
+var Package = function (name) {
+    this.name = name;
+    this.shipped = false;
+    this.has = 'have';
+};
+
+Package.prototype.ship = function () {
+    if (this.shipped) {
+        throw new Error('Already shipped');
+    }
+    this.shipped = true;
+    return this;
+};
+
+/**
+ * New package
+ */
+var shoes = new Package('shoes');
+
+Package.prototype.ship.then(function () {
+    log('Your %1 %2 shipped!'
+        .replace('%1', this.name)
+        .replace('%2', this.has));;
+});
+
+Package.prototype.ship.error(function (e) {
+    log('There was an error shipping your ' + this.name);
+});
+
+Package.funj();
+
+shoes.ship.now();
+
+shoes.ship.in(2, 's');
+
+</script>
