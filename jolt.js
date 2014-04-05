@@ -48,6 +48,9 @@
 
 (function (Obj, Fn) {
 
+    /**
+     * {}.jolt
+     */
     Obj.__defineGetter__('jolt', function () {
 
         var self = this;
@@ -66,5 +69,15 @@
         self.__proto__ = cls.__jolt__;
         return self.jolt;
     });
+
+    /**
+     * fn () {}.as('Name')
+     */
+    Fn.as = function (name) {
+        return (new Function("return function (call) { " +
+            "return function " + name + " () { return " + 
+            "call(this, arguments) }; };")()
+        )(Function.apply.bind(this));
+    };
 
 })({}.__proto__, (function () {}).__proto__);
