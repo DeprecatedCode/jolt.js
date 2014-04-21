@@ -13,7 +13,7 @@ var log = function (x) {
 };
 
 var Person = function Person (name) {
-    this.jolt();  // This bit makes everything happen
+    this.$jolt();  // This bit makes everything happen
 
     this.name = name;
     this.alive = true;
@@ -28,14 +28,14 @@ Person.greeting = function property () {
 };
 
 Person.formatGreeting = function classMethod (cls, name, planet) {
-    return 'Hi, I am %1 from %2'.replace('%1', name).replace('%2', planet);
+    return 'Hi, I am %0 from %1'.$fmt(name, planet);
 };
 
 var bob = new Person('Bob Miller');
 bob.setPlanet('Earth');
 console.log(bob.greeting);  // Prints 'Hi, I am Bob Miller from Earth.'
 
-bob.setPlanet('Mars').in(2000)
+bob.setPlanet.in(2000)('Mars');
 bob.setPlanet.then(function () {
     console.log(bob.greeting);
 });
