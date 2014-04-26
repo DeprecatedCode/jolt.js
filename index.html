@@ -28,7 +28,7 @@ Person.greeting = function property () {
 };
 
 Person.formatGreeting = function classMethod (cls, name, planet) {
-    return 'Hi, I am %0 from %1'.$fmt(name, planet);
+    return 'Hi, I am %0 from %1'.format(name, planet);
 };
 
 var bob = new Person('Bob Miller');
@@ -39,5 +39,8 @@ bob.setPlanet.in(2000)('Mars');
 bob.setPlanet.then(function () {
     console.log(bob.greeting);
 });
+
+var x = bob.setPlanet;
+x.in(4000)('Jupiter');
 
 </script>

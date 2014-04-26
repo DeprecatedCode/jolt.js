@@ -29,7 +29,7 @@
  *     };
  *
  *     Person.formatGreeting = function classMethod (cls, name, planet) {
- *         return 'Hi, I am %0 from %1'.$fmt(name, planet);
+ *         return 'Hi, I am %0 from %1'.format(name, planet);
  *     };
  * 
  * The basics work as expected:
@@ -46,7 +46,7 @@
  *     });
  */
 
-(function (Obj, Fn) {
+(function (Obj, Fn, Str) {
 
     /**
      * {}.$jolt
@@ -82,9 +82,31 @@
     };
 
     /**
-     * "".$fmt()
+     * function () {}.in(1000)
      */
-    String.prototype.$fmt = function () {
+    Fn.in = function (ms) {
+        var fn = this;
+        return function () {
+            var a = arr(arguments);
+            return setTimeout(function timeout () {
+                fn.apply(undefined, a);
+            }, ms);
+        };
+    };
+
+    /**
+     * function () {}.then(function () {}))
+     */
+    Fn.then = function (next) {
+        if (!this.$then) this.$then = [];
+        this.$then.push(next);
+        return this;
+    };
+
+    /**
+     * "".format()
+     */
+    Str.format = function () {
         var s = this;
         Array.prototype.slice.call(arguments)
         .forEach(function (v, i) {
@@ -110,7 +132,7 @@
                         return setupClassMethod(cls, key);
                 }
                 throw Error("Function %0.%1 has invalid name: %2"
-                    .$fmt(cls.name, key, cls[key].name));
+                    .format(cls.name, key, cls[key].name));
         };
     };
 
@@ -118,8 +140,16 @@
      * Private: setupMethod
      */
     var setupMethod = function (cls, key) {
+        var fn = function () {
+            var result = cls[key].apply(this, arr(arguments));
+            fn.$then && fn.$then.forEach &&
+            fn.$then.forEach(function (next) {
+                next.call(this, result);
+            });
+            return result;
+        };
         cls.__jolt__.__defineGetter__(key, function () {
-            return cls[key].bind(this);
+            return fn;
         });
     };
 
@@ -137,11 +167,18 @@
         cls.__jolt__.__defineGetter__(key, function () {
             var _cls = this.$class;
             return function classMethod () {
-                var a = Array.prototype.slice.call(arguments);
+                var a = arr(arguments);
                 a.unshift(_cls);
                 return _cls[key].apply(undefined, a);
             };
         });
     };
 
-})({}.__proto__, (function () {}).__proto__);
+    /**
+     * Private: arr(arguments)
+     */
+    var arr = function (a) {
+        return Array.prototype.slice.call(a);
+    };
+
+})(Object.prototype, Function.prototype, String.prototype);
